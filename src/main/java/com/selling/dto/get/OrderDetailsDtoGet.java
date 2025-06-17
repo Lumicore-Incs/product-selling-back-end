@@ -17,5 +17,5 @@ public class OrderDetailsDtoGet {
     private Integer qty;
     private BigDecimal total;
     private ProductDto productId;
-    private OrderDtoGet orderId;
+    private Integer orderId;
 }

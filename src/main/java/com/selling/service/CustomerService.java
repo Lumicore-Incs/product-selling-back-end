@@ -1,8 +1,6 @@
 package com.selling.service;
 
-import com.selling.dto.CustomerDto;
 import com.selling.dto.CustomerRequestDTO;
-import com.selling.dto.ProductDto;
 import com.selling.dto.UserDto;
 import com.selling.dto.get.CustomerDtoGet;
 

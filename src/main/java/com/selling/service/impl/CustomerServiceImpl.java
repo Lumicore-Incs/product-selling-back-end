@@ -29,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerDtoGet saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto){
+    public CustomerDtoGet saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto) {
         // 1. Save Customer
         Customer customer = new Customer();
         customer.setName(requestDTO.getName());
@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setContact01(requestDTO.getContact01());
         customer.setContact02(requestDTO.getContact02());
         customer.setDate(LocalDateTime.now());
-        customer.setUser(userRepository.findUserById(userDto.getId()));
+        customer.setUser(userRepository.findUserById(Long.valueOf(userDto.getId())));
         customer.setStatus("active");
 
         if (requestDTO.getUserId() != null) {
@@ -81,7 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDtoGet> getAllCustomer() {
-        System.out.println("1");
         List<CustomerDtoGet> customerDtoGetList = new ArrayList<>();
         List<Customer> allCustomer = customerRepository.findAll();
         for (Customer customer : allCustomer) {
@@ -92,9 +91,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDtoGet> getAllCustomerByUserId(UserDto userDto) {
-        System.out.println("2");
         List<CustomerDtoGet> customerDtoGetList = new ArrayList<>();
-        List<Customer> allCustomer = customerRepository.findAllByUserId(userDto.getId());
+        List<Customer> allCustomer = customerRepository.findAllByUserId(Long.valueOf(userDto.getId()));
         for (Customer customer : allCustomer) {
             customerDtoGetList.add(entityToCustomerDto(customer));
         }
@@ -108,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     //mapper handle=============
     private CustomerDtoGet entityToCustomerDto(Customer savedCustomer) {
-        if (savedCustomer!=null){
+        if (savedCustomer != null) {
             CustomerDtoGet map = modelMapperConfig.modelMapper().map(savedCustomer, CustomerDtoGet.class);
             map.setUserId(entityToUserDto(savedCustomer.getUser()));
             return map;

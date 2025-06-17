@@ -1,6 +1,5 @@
 package com.selling.controller;
 
-import com.selling.dto.CustomerDto;
 import com.selling.dto.CustomerRequestDTO;
 import com.selling.dto.UserDto;
 import com.selling.dto.get.CustomerDtoGet;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.selling.dto.ProductDto;
 import com.selling.util.TokenStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,10 +52,10 @@ public class CustomerController {
                 return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
             }
             UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
-            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")){
+            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")) {
                 List<CustomerDtoGet> allCustomer = customerService.getAllCustomer();
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);
-            }else {
+            } else {
 
                 List<CustomerDtoGet> allCustomer = customerService.getAllCustomerByUserId(userDto);
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);
