@@ -48,7 +48,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody UserDto userDto) {
-        UserDto isUser = this.userService.findUserByName(userDto.getEmail(), userDto.getUserName());
+        UserDto isUser = this.userService.findUserByName(userDto.getEmail(), userDto.getName());
         if (isUser == null) {
             UserDtoForGet dto = this.userService.registerUser(userDto);
             return new ResponseEntity<>(dto, HttpStatus.CREATED);
