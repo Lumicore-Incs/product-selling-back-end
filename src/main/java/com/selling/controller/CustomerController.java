@@ -1,0 +1,71 @@
+package com.selling.controller;
+
+import com.selling.dto.CustomerDto;
+import com.selling.dto.CustomerRequestDTO;
+import com.selling.dto.UserDto;
+import com.selling.dto.get.CustomerDtoGet;
+import com.selling.service.CustomerService;
+import com.selling.util.JWTTokenGenerator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.selling.dto.ProductDto;
+import com.selling.util.TokenStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
+
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/customer")
+public class CustomerController {
+    @Autowired
+    private JWTTokenGenerator jwtTokenGenerator;
+
+    @Autowired
+    private final CustomerService customerService;
+
+    @PostMapping
+    public ResponseEntity<Object> saveCustomer(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
+            @RequestBody CustomerRequestDTO requestDTO) {
+        try {
+            if (!jwtTokenGenerator.validateJwtToken(authorizationHeader)) {
+                return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
+            }
+            UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
+            CustomerDtoGet savedCustomer = customerService.saveCustomer(requestDTO, userDto);
+            return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error saving product: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllCustomer(@RequestHeader(name = "Authorization") String authorizationHeader) {
+        try {
+            if (!jwtTokenGenerator.validateJwtToken(authorizationHeader)) {
+                return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
+            }
+            UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
+            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")){
+                List<CustomerDtoGet> allCustomer = customerService.getAllCustomer();
+                return new ResponseEntity<>(allCustomer, HttpStatus.OK);
+            }else {
+
+                List<CustomerDtoGet> allCustomer = customerService.getAllCustomerByUserId(userDto);
+                return new ResponseEntity<>(allCustomer, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error retrieving products: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+}
