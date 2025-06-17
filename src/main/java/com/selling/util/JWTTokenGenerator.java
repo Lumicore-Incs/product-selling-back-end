@@ -35,7 +35,7 @@ public class JWTTokenGenerator {
     public String generateJwtToken(UserDto user) {
         return Jwts.builder()
                 .setId(String.valueOf(user.getId()))
-                .setSubject((user.getUserName()))
+                .setSubject((user.getName()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)

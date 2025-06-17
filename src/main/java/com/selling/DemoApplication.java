@@ -36,7 +36,7 @@ public class DemoApplication {
 			Optional<User> byEmail = userRepo.findByEmail("nipuna315np@gmail.com");
 			if (byEmail.isEmpty()) {
 				String encodePassword = passwordEncoder.encode("1234");
-				userRepo.save(new User(null,"piyumal", "galle", "nipuna315np@gmail.com", "0754585756", "Admin", "199907502281", String.valueOf(LocalDateTime.now()), "active", "piyumal", encodePassword));
+				userRepo.save(new User(null,"piyumal", "nipuna315np@gmail.com", "0754585756", "Admin", String.valueOf(LocalDateTime.now()), "active", encodePassword));
 			}
 
 		} catch (Exception e) {
