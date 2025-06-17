@@ -5,6 +5,7 @@ import com.selling.model.Product;
 import com.selling.repository.ProductRepo;
 import com.selling.service.ProductService;
 import com.selling.util.ModelMapperConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepo productRepository;
-    private ModelMapperConfig modelMapperConfig;
+    private final ModelMapperConfig modelMapperConfig;
+
 
     @Override
     public ProductDto saveProduct(ProductDto productDTO) {
@@ -27,8 +30,8 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productDTO.getPrice());
         product.setStatus("active"); // Default status
 
-        Product savedProduct = productRepository.save(product);
-        return entityToDTO(savedProduct);
+        productRepository.save(product);
+        return entityToDTO(product);
     }
 
     @Override
@@ -103,6 +106,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductDto entityToDTO(Product product) {
-        return modelMapperConfig.modelMapper().map(product, ProductDto.class);
+        return (product == null) ? null : modelMapperConfig.modelMapper().map(product, ProductDto.class);
     }
 }
