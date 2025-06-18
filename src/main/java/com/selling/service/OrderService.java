@@ -10,4 +10,7 @@ public interface OrderService {
     List<OrderDtoGet> getAllOrder();
 
     List<OrderDtoGet> getAllCOrderByUserId(UserDto userDto);
+
+    void updateOrderDetails();
+
 }

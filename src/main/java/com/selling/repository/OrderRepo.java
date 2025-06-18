@@ -12,4 +12,6 @@ public interface OrderRepo extends JpaRepository<Order, Integer> {
     List<Order> findByCustomerUser(User userId);
 
     List<Order> findAllByOrderByOrderIdDesc();
+
+    List<Order> findTop200ByOrderByOrderIdDesc();
 }
