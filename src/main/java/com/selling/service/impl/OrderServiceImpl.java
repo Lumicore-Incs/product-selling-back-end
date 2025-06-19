@@ -10,8 +10,12 @@ import com.selling.repository.OrderDetailsRepo;
 import com.selling.repository.OrderRepo;
 import com.selling.service.OrderService;
 import com.selling.util.ModelMapperConfig;
+import com.vonage.client.VonageClient;
+import com.vonage.client.sms.SmsSubmissionResponse;
+import com.vonage.client.sms.SmsSubmissionResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -29,6 +33,7 @@ import com.google.gson.JsonParser;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import com.vonage.client.sms.messages.TextMessage;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +42,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepo orderRepo;
     private final OrderDetailsRepo orderDetailsRepo;
     private final ModelMapperConfig modelMapperConfig;
+    private final VonageClient vonageClient;
+
+    @Value("${vonage.sms.sender}")
+    private String senderId;
 
     @Override
     public List<OrderDtoGet> getAllOrder() {
@@ -83,13 +92,83 @@ public class OrderServiceImpl implements OrderService {
             if (!(order.getStatus().equals("Delivered") || order.getStatus().equals("Failed to Deliver"))){
                 String value=checkTrackingStatus(order.getTrackingId());
                 order.setStatus(value);
-                sendMassage("+94782862763", value);
-                orderRepo.save(order);
+                sendMassage("0782862763", value);
+                //orderRepo.save(order);
             }
         }
     }
 
     private void sendMassage(String contact01, String value) {
+//        Twilio.init("AC9ef6af7b744f3ecd66012d2fe992fc72", "8adb10540bc3d7cdab2ac906db6e148d");
+//        String whatsappNumber = "whatsapp:" + contact01;
+//        String whatsappFromNumber = "whatsapp:+14155238886";
+//        System.out.println(contact01);
+//        try {
+//            Message message = Message.creator(
+//                    new PhoneNumber(whatsappNumber),
+//                    new PhoneNumber(whatsappFromNumber),// Your Twilio WhatsApp number
+//                    "Your order has been : " + value
+//            ).create();
+//
+//            System.out.println("WhatsApp message sent! SID: "+ message.getSid());
+//        } catch (Exception e) {
+//            System.err.println("Failed to send WhatsApp message: " + e.getMessage());
+//        }
+
+
+//        Twilio.init("AC9ef6af7b744f3ecd66012d2fe992fc72", "8adb10540bc3d7cdab2ac906db6e148d");
+//        String toNumber = contact01; // අංකයේ format: "+94771234567" (ජාත්‍යන්තර ආකාරයෙන්)
+//        String fromNumber = "+12564820760"; // ඔබගේ Twilio SMS-enabled අංකය
+//
+//        try {
+//            Message message = Message.creator(
+//                    new PhoneNumber(toNumber),  // ලබන්නාගේ අංකය
+//                    new PhoneNumber(fromNumber), // Twilio අංකය
+//                    "Your order has been: " + value  // පණිවිඩය
+//            ).create();
+//
+//            System.out.println("SMS sent! SID: " + message.getSid());
+//        } catch (Exception e) {
+//            System.err.println("Failed to send SMS: " + e.getMessage());
+//        }
+
+
+//        String formattedNumber = formatPhoneNumber(contact01);
+//
+//        TextMessage message = new TextMessage(
+//                senderId,
+//                formattedNumber,
+//                value
+//        );
+//
+//        try {
+//            SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
+//
+//            response.getMessages().forEach(msg -> {
+//                System.out.printf("Message sent to %s. ID: %s, Status: %s%n",
+//                        msg.getTo(),
+//                        msg.getStatus());
+//            });
+//        } catch (Exception e) {
+//            System.err.println("Error sending SMS: " + e.getMessage());
+//            throw new RuntimeException("Failed to send SMS", e);
+//        }
+
+
+    }
+
+    // In OrderServiceImpl.java
+    private String formatPhoneNumber(String phoneNumber) {
+        // Remove any non-digit characters
+        String digits = phoneNumber.replaceAll("\\D", "");
+
+        // Handle Sri Lankan numbers (assumes numbers starting with 0 or +94)
+        if (digits.startsWith("0")) {
+            return "+94" + digits.substring(1);
+        } else if (!digits.startsWith("+")) {
+            return "+" + digits;
+        }
+        return digits;
     }
 
     private String checkTrackingStatus(String id) {
@@ -108,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
                 JsonObject jsonResponse = JsonParser.parseReader(in).getAsJsonObject();
                 in.close();
 
-                JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+                JsonArray dataArray = jsonResponse.getAsJsonArray("todayOrder");
                 String lastStatus = null;
 
                 for (int i = 0; i < dataArray.size(); i++) {

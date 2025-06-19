@@ -38,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setContact02(requestDTO.getContact02());
         customer.setDate(LocalDateTime.now());
         customer.setUser(userRepository.findUserById(Long.valueOf(userDto.getId())));
-        customer.setStatus("active");
+        customer.setStatus("pending");
 
         if (requestDTO.getUserId() != null) {
             User user = userRepository.findById(Long.valueOf(requestDTO.getUserId()))
