@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,4 +21,5 @@ public class OrderDtoGet {
     private String trackingId;
     private String status;
     private CustomerDto customerId;
+    private List<OrderDetailsDtoGet> orderDetails;
 }

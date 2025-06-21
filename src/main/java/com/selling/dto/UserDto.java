@@ -17,5 +17,6 @@ public class UserDto {
     private String role;
     private String registration_date;
     private String status;
+    private String type;
     private String password;
 }
