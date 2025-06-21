@@ -4,7 +4,10 @@ import com.selling.model.Order;
 import com.selling.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepo extends JpaRepository<Order, Integer> {
@@ -14,4 +17,8 @@ public interface OrderRepo extends JpaRepository<Order, Integer> {
     List<Order> findAllByOrderByOrderIdDesc();
 
     List<Order> findTop200ByOrderByOrderIdDesc();
+
+    int countByStatusAndDateBetween(String deliver, LocalDateTime startOfMonth, LocalDateTime now);
+
+    int countByCustomerUserEmailAndStatusAndDateBetween(String email, String deliver, LocalDateTime startOfMonth, LocalDateTime now);
 }

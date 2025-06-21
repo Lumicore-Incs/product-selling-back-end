@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     private String senderId;
 
     @Override
-    public List<OrderDtoGet> getAllOrder() {
+    public List<OrderDtoGet> getAllTodayOrder() {
         List<OrderDtoGet> customerDtoGetList = new ArrayList<>();
         List<Order> allCustomer = orderRepo.findAll();
 
@@ -67,9 +67,20 @@ public class OrderServiceImpl implements OrderService {
         return customerDtoGetList;
     }
 
+    @Override
+    public List<OrderDtoGet> getAllOrder() {
+        List<OrderDtoGet> customerDtoGetList = new ArrayList<>();
+        List<Order> allCustomer = orderRepo.findAll();
+
+        for (Order order : allCustomer) {
+            customerDtoGetList.add(entityToOrderDtoGet(order));
+        }
+        return customerDtoGetList;
+    }
+
 
     @Override
-    public List<OrderDtoGet> getAllCOrderByUserId(UserDto userDto) {
+    public List<OrderDtoGet> getAllTodayOrderByUserId(UserDto userDto) {
         List<OrderDtoGet> orderDtoGetList = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
@@ -86,14 +97,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDtoGet> getAllOrderByUserId(UserDto userDto) {
+        List<OrderDtoGet> orderDtoGetList = new ArrayList<>();
+        List<Order> userOrders = orderRepo.findByCustomerUser(dtoToUserEntity(userDto));
+        for (Order order : userOrders) {
+            orderDtoGetList.add(entityToOrderDtoGet(order));
+        }
+        return orderDtoGetList;
+    }
+
+    @Override
     public void updateOrderDetails() {
         List<Order> recentOrders = orderRepo.findTop200ByOrderByOrderIdDesc();
         for (Order order : recentOrders) {
-            if (!(order.getStatus().equals("Delivered") || order.getStatus().equals("Failed to Deliver"))){
-                String value=checkTrackingStatus(order.getTrackingId());
+            if (!(order.getStatus().equals("Delivered") || order.getStatus().equals("Failed to Deliver"))) {
+                String value = checkTrackingStatus(order.getTrackingId());
                 order.setStatus(value);
                 sendMassage("0782862763", value);
-                //orderRepo.save(order);
+                orderRepo.save(order);
             }
         }
     }
@@ -172,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private String checkTrackingStatus(String id) {
-        String apiUrl = "https://api.transexpress.lk/api/v1/tracking?waybill_id="+id;
+        String apiUrl = "https://api.transexpress.lk/api/v1/tracking?waybill_id=" + id;
 
         try {
             URL url = new URL(apiUrl);
@@ -187,7 +208,7 @@ public class OrderServiceImpl implements OrderService {
                 JsonObject jsonResponse = JsonParser.parseReader(in).getAsJsonObject();
                 in.close();
 
-                JsonArray dataArray = jsonResponse.getAsJsonArray("todayOrder");
+                JsonArray dataArray = jsonResponse.getAsJsonArray("data");
                 String lastStatus = null;
 
                 for (int i = 0; i < dataArray.size(); i++) {

@@ -18,4 +18,8 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
             "WHERE c.status = 'pending'" +
             "ORDER BY od.qty asc ")
     List<ExcelTypeDto> findPendingOrdersWithQuantities();
+
+    int countByUserId(Long id);
+
+    List<Customer> findByUser_Id(Long id);
 }

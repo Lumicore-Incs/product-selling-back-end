@@ -18,6 +18,7 @@ public class UserDtoForGet {
     private String role;
     private String registration_date;
     private String status;
+    private String type;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 }
