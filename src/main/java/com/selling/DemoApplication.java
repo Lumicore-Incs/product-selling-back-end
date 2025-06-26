@@ -44,7 +44,7 @@ public class DemoApplication {
 			logger.error("An error occurred during user initialization.", e);
 		}
 
-		dashboardController.updateOrderDetails();
+//		dashboardController.updateOrderDetails();
 
 //		new Thread(() -> {
 //			while (true) {

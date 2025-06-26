@@ -58,8 +58,8 @@ public class OrderController {
             }
             UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
             System.out.println(userDto.getRole());
-            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")){
-
+            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")){
+                System.out.println("ok");
                 List<OrderDtoGet> allCustomer = orderService.getAllOrder();
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);
             }else {
