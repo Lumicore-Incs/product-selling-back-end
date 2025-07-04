@@ -1,6 +1,7 @@
 package com.selling.dto.get;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.selling.dto.ProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,5 @@ public class UserDtoForGet {
     private String type;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    private ProductDto productId;
 }

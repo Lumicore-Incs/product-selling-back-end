@@ -22,6 +22,8 @@ public class Order {
     @Column(name = "order_id")
     private Integer orderId;
 
+    private String serialNo;
+
     private BigDecimal totalPrice;
 
     private LocalDateTime date;
@@ -29,6 +31,8 @@ public class Order {
     private String trackingId;
 
     private String status;
+
+    private String remark;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")

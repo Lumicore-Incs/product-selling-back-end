@@ -3,8 +3,10 @@ package com.selling.service.impl;
 import com.selling.dto.UserDto;
 import com.selling.dto.get.UserDtoForGet;
 import com.selling.model.Otp;
+import com.selling.model.Product;
 import com.selling.model.User;
 import com.selling.repository.OtpRepo;
+import com.selling.repository.ProductRepo;
 import com.selling.repository.UserRepo;
 import com.selling.service.UserService;
 import com.selling.util.MailService;
@@ -24,14 +26,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final ModelMapperConfig modelMapper;
     private final OtpRepo otpRepo;
+    private final ProductRepo productRepo;
     private final MailService mailService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public UserServiceImpl(UserRepo userRepo, ModelMapperConfig modelMapper, OtpRepo otpRepo, MailService mailService) {
+    public UserServiceImpl(UserRepo userRepo, ModelMapperConfig modelMapper, OtpRepo otpRepo, ProductRepo productRepo, MailService mailService) {
         this.userRepo = userRepo;
         this.modelMapper = modelMapper;
         this.otpRepo = otpRepo;
+        this.productRepo = productRepo;
         this.mailService = mailService;
     }
 
@@ -63,9 +67,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDtoForGet registerUser(UserDto userDto) {
         User user = this.dtoToEntity(userDto);
+        System.out.println(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setStatus("active");
         user.setRegistration_date(String.valueOf(LocalDateTime.now()));
+        Optional<Product> byId = productRepo.findById(Long.valueOf(userDto.getProductId()));
+        byId.ifPresent(user::setProduct);
         User save = this.userRepo.save(user);
         return entityToUserDtoForGet(save);
     }

@@ -22,4 +22,7 @@ public class Product {
     private String name;
     private BigDecimal price;
     private String status;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private User user;
 }

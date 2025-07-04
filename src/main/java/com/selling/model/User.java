@@ -28,6 +28,24 @@ public class User {
     private String type;
     private String password;
 
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    private Product product;
+
     @OneToMany(mappedBy = "user")
     private List<Customer> customers;
+
+
+    public User(Long id, String name, String email, String telephone, String role, String registration_date, String status, String type, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.role = role;
+        this.registration_date = registration_date;
+        this.status = status;
+        this.type = type;
+        this.password = password;
+    }
 }

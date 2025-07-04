@@ -19,4 +19,5 @@ public class UserDto {
     private String status;
     private String type;
     private String password;
+    private String productId;
 }

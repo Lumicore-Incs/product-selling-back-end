@@ -18,9 +18,11 @@ import java.util.List;
 @ToString
 public class OrderDto {
     private Integer orderId;
+    private String serialNo;
     private BigDecimal totalPrice;
     private LocalDateTime date;
     private String trackingId;
     private String status;
+    private String remark;
     private Integer customerId;
 }
