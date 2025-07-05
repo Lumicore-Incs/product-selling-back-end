@@ -35,6 +35,7 @@ public class DemoApplication {
 	@PostConstruct
 	public void initUsers() {
 		try {
+            System.out.println("ok");
 			Optional<User> byEmail = userRepo.findByEmail("nipuna315np@gmail.com");
 			if (byEmail.isEmpty()) {
 				String encodePassword = passwordEncoder.encode("1234");
