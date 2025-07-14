@@ -35,7 +35,7 @@ public class OrderController {
             }
             UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
             System.out.println(userDto.getRole());
-            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")){
+            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")){
 
                 List<OrderDtoGet> allCustomer = orderService.getAllTodayOrder();
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);
@@ -57,8 +57,7 @@ public class OrderController {
                 return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
             }
             UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
-            System.out.println(userDto.getRole());
-            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN")){
+            if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")){
 
                 List<OrderDtoGet> allCustomer = orderService.getAllOrder();
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);

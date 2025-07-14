@@ -90,6 +90,7 @@ public class AuthController {
 
     @PostMapping("/send")
     public String sendOtp(@RequestParam String email) {
+        System.out.println(email);
         boolean isSave=userService.sendOtpToEmail(email);
         if (isSave){
             return "OTP sent successfully to " + email;

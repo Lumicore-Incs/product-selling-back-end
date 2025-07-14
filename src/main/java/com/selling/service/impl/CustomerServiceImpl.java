@@ -53,6 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
         order.setCustomer(savedCustomer);
         order.setDate(LocalDateTime.now());
         order.setStatus("pending");
+        order.setRemark(requestDTO.getRemark());
         order.setTrackingId(generateTrackingId()); // Implement this method
         order.setTotalPrice(requestDTO.getTotalCost());
         Order savedOrder = orderRepository.save(order);
