@@ -3,15 +3,20 @@ package com.selling.service.impl;
 import com.selling.dto.UserDto;
 import com.selling.dto.get.ExcelTypeDto;
 import com.selling.model.Customer;
+import com.selling.model.Order;
+import com.selling.model.Product;
 import com.selling.repository.CustomerRepo;
 import com.selling.repository.OrderRepo;
+import com.selling.repository.ProductRepo;
 import com.selling.repository.UserRepo;
 import com.selling.service.DashBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +27,36 @@ public class DashBoardServiceImpl implements DashBoardService {
     @Autowired
     private final CustomerRepo customerRepo;
     private final OrderRepo orderRepo;
-    @Autowired
-    private UserRepo userRepo;
+    private final ProductRepo productRepo;
 
+    @Transactional
     @Override
-    public List<ExcelTypeDto> findOrder() {
-        return customerRepo.findPendingOrdersWithQuantities();
+    public List<ExcelTypeDto> findOrder(String name) {
+        System.out.println("1");
+        System.out.println(name);
+        Product byName = productRepo.findByName(name);
+        System.out.println(byName);
+        if (byName == null) {
+            return null;
+        }
+        List<Order> pendingOrdersWithQuantities = customerRepo.findPendingOrdersWithQuantities(byName.getProductId());
+        List<ExcelTypeDto> excelTypeDtos = new ArrayList<>();
+
+        for (Order order : pendingOrdersWithQuantities) {
+            Customer customer=order.getCustomer();
+            customer.setStatus("print");
+            customerRepo.save(customer);
+
+            ExcelTypeDto excelTypeDto = new ExcelTypeDto();
+            excelTypeDto.setId(order.getOrderId());
+            excelTypeDto.setName(customer.getName());
+            excelTypeDto.setAddress(customer.getAddress());
+            excelTypeDto.setContact01(customer.getContact01());
+            excelTypeDto.setContact02(customer.getContact02());
+            excelTypeDto.setQty(order.getOrderDetails().size());
+            excelTypeDtos.add(excelTypeDto);
+        }
+        return excelTypeDtos;
     }
 
     @Override

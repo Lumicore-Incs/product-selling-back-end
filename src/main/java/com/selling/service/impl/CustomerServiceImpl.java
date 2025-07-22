@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,6 +99,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerDtoGetList.add(entityToCustomerDto(customer));
         }
         return customerDtoGetList;
+    }
+
+    @Override
+    public boolean deleteCustomer(Integer id) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        customerOptional.ifPresent(customerRepository::delete);
+        return false;
     }
 
 

@@ -2,6 +2,8 @@ package com.selling.repository;
 
 import com.selling.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,4 +22,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
             String name, BigDecimal maxPrice, String status);
     List<Product> findByNameContainingAndPriceBetweenAndStatus(
             String name, BigDecimal minPrice, BigDecimal maxPrice, String status);
+
+    Product findByName(String name);
 }

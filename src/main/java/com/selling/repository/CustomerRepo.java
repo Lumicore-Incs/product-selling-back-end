@@ -2,8 +2,10 @@ package com.selling.repository;
 
 import com.selling.dto.get.ExcelTypeDto;
 import com.selling.model.Customer;
+import com.selling.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -15,9 +17,18 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
             "FROM Customer c " +
             "JOIN c.orders o " +
             "JOIN o.orderDetails od " +
-            "WHERE c.status = 'pending'" +
+            "WHERE c.status = 'print'" +
             "ORDER BY od.qty asc ")
     List<ExcelTypeDto> findPendingOrdersWithQuantities();
+
+    @Query("SELECT o " +
+            "FROM Customer c " +
+            "JOIN c.orders o " +
+            "JOIN o.orderDetails od " +
+            "WHERE c.status = 'pending' " +
+            "AND od.product.id = :productId " +
+            "ORDER BY od.qty ASC")
+    List<Order> findPendingOrdersWithQuantities(@Param("productId") Integer productId);
 
     int countByUserId(Long id);
 

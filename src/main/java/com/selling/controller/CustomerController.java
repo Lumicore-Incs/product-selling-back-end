@@ -45,7 +45,7 @@ public class CustomerController {
         }
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Object> getAllCustomer(@RequestHeader(name = "Authorization") String authorizationHeader) {
         try {
             if (!jwtTokenGenerator.validateJwtToken(authorizationHeader)) {
@@ -59,6 +59,24 @@ public class CustomerController {
 
                 List<CustomerDtoGet> allCustomer = customerService.getAllCustomerByUserId(userDto);
                 return new ResponseEntity<>(allCustomer, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error retrieving products: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader, @PathVariable Integer id) {
+        try {
+            if (!jwtTokenGenerator.validateJwtToken(authorizationHeader)) {
+                return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
+            }
+            boolean isDeleted =  customerService.deleteCustomer(id);
+            if (isDeleted) {
+                return new ResponseEntity<>("Customer disabled successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             return new ResponseEntity<>("Error retrieving products: " + e.getMessage(),

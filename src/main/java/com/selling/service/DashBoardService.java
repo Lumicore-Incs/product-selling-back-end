@@ -6,7 +6,7 @@ import com.selling.dto.get.ExcelTypeDto;
 import java.util.List;
 
 public interface DashBoardService {
-    List<ExcelTypeDto> findOrder();
+    List<ExcelTypeDto> findOrder(String name);
 
     List<ExcelTypeDto> ConformOrder();
 

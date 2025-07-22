@@ -38,13 +38,13 @@ public class DashboardController {
     }
 
 
-    @GetMapping("/excel")
-    public ResponseEntity<Object> exportToExcel(@RequestHeader(name = "Authorization") String authorizationHeader) {
+    @GetMapping("/excel/{name}")
+    public ResponseEntity<Object> exportToExcel(@RequestHeader(name = "Authorization") String authorizationHeader, @PathVariable String name) {
         try {
             if (!jwtTokenGenerator.validateJwtToken(authorizationHeader)) {
                 return new ResponseEntity<>(TokenStatus.TOKEN_INVALID, HttpStatus.UNAUTHORIZED);
             }
-            List<ExcelTypeDto> entities = dashBoardService.findOrder();
+            List<ExcelTypeDto> entities = dashBoardService.findOrder(name);
 
             ByteArrayInputStream in = excelExportService.exportToExcel(entities);
 

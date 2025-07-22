@@ -12,4 +12,6 @@ public interface CustomerService {
     List<CustomerDtoGet> getAllCustomer();
 
     List<CustomerDtoGet> getAllCustomerByUserId(UserDto userDto);
+
+    boolean deleteCustomer(Integer id);
 }
