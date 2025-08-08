@@ -4,6 +4,7 @@ import com.selling.dto.UserDto;
 import com.selling.dto.get.ExcelTypeDto;
 import com.selling.model.Customer;
 import com.selling.model.Order;
+import com.selling.model.OrderDetails;
 import com.selling.model.Product;
 import com.selling.repository.CustomerRepo;
 import com.selling.repository.OrderRepo;
@@ -32,30 +33,80 @@ public class DashBoardServiceImpl implements DashBoardService {
     @Transactional
     @Override
     public List<ExcelTypeDto> findOrder(String name) {
-        System.out.println("1");
-        System.out.println(name);
-        Product byName = productRepo.findByName(name);
-        System.out.println(byName);
-        if (byName == null) {
-            return null;
-        }
-        List<Order> pendingOrdersWithQuantities = customerRepo.findPendingOrdersWithQuantities(byName.getProductId());
         List<ExcelTypeDto> excelTypeDtos = new ArrayList<>();
+        Product byName = productRepo.findByName(name);
+        if (byName == null) {
+            List<Order> pendingOrdersWithQuantities = customerRepo.findPendingOrdersWithQuantities(0);
 
-        for (Order order : pendingOrdersWithQuantities) {
-            Customer customer=order.getCustomer();
-            customer.setStatus("print");
-            customerRepo.save(customer);
+            for (Order order : pendingOrdersWithQuantities) {
+                int size = order.getOrderDetails().size();
 
-            ExcelTypeDto excelTypeDto = new ExcelTypeDto();
-            excelTypeDto.setId(order.getOrderId());
-            excelTypeDto.setName(customer.getName());
-            excelTypeDto.setAddress(customer.getAddress());
-            excelTypeDto.setContact01(customer.getContact01());
-            excelTypeDto.setContact02(customer.getContact02());
-            excelTypeDto.setQty(order.getOrderDetails().size());
-            excelTypeDtos.add(excelTypeDto);
+                if (size != 1) {
+                    StringBuilder qtyDetails = null;
+                    for (OrderDetails od : order.getOrderDetails()) {
+                        Product product = productRepo.findAllByProductId(od.getProduct().getProductId());
+
+                        if (qtyDetails == null) {
+                            qtyDetails = new StringBuilder();
+                        }
+                        qtyDetails.append(" + ").append(product.getName()).append(" + ").append(od.getQty());
+                    }
+
+                    Customer customer = order.getCustomer();
+                    customer.setStatus("print");
+                    customerRepo.save(customer);
+
+                    ExcelTypeDto excelTypeDto = new ExcelTypeDto();
+                    excelTypeDto.setId(order.getOrderId());
+                    excelTypeDto.setName(customer.getName());
+                    excelTypeDto.setAddress(customer.getAddress());
+                    excelTypeDto.setContact01(customer.getContact01());
+                    excelTypeDto.setContact02(customer.getContact02());
+                    excelTypeDto.setQty(String.valueOf(qtyDetails));
+                    excelTypeDtos.add(excelTypeDto);
+                }
+            }
+        } else {
+            System.out.println("else");
+            List<Order> pendingOrdersWithQuantities = customerRepo.findPendingOrdersWithQuantities(byName.getProductId());
+            System.out.println(pendingOrdersWithQuantities.size());
+            for (Order order : pendingOrdersWithQuantities) {
+                int size = order.getOrderDetails().size();
+                System.out.println("sixe : "+size);
+                if (size == 1) {
+                    StringBuilder qtyDetails = null;
+                    for (OrderDetails od : order.getOrderDetails()) {
+                        if (od.getProduct().getProductId().equals(byName.getProductId())) {
+                            Product product = productRepo.findAllByProductId(od.getProduct().getProductId());
+                            if (qtyDetails == null) {
+                                qtyDetails = new StringBuilder();
+                            }
+                            System.out.println(size);
+                            System.out.println("-------------");
+                            System.out.println(od.getQty());
+                            System.out.println(qtyDetails);
+                            System.out.println("-------------");
+                            qtyDetails.append(" + ").append(product.getName()).append(" + ").append(od.getQty());
+                        }
+                    }
+
+                        Customer customer = order.getCustomer();
+                        //customer.setStatus("print");
+                        customerRepo.save(customer);
+                    System.out.println("============");
+                    System.out.println(customer.getName());
+                        ExcelTypeDto excelTypeDto = new ExcelTypeDto();
+                        excelTypeDto.setId(order.getOrderId());
+                        excelTypeDto.setName(customer.getName());
+                        excelTypeDto.setAddress(customer.getAddress());
+                        excelTypeDto.setContact01(customer.getContact01());
+                        excelTypeDto.setContact02(customer.getContact02());
+                        excelTypeDto.setQty(String.valueOf(qtyDetails));
+                        excelTypeDtos.add(excelTypeDto);
+                }
+            }
         }
+
         return excelTypeDtos;
     }
 

@@ -24,4 +24,6 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
             String name, BigDecimal minPrice, BigDecimal maxPrice, String status);
 
     Product findByName(String name);
+
+    Product findAllByProductId(Integer productId);
 }

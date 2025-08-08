@@ -30,6 +30,7 @@ public class DashboardController {
     @Autowired
     private ExcelExportService excelExportService;
     private final OrderService orderService;
+    @Autowired
     private final DashBoardService dashBoardService;
     private final JWTTokenGenerator jwtTokenGenerator;
 
@@ -46,16 +47,18 @@ public class DashboardController {
             }
             List<ExcelTypeDto> entities = dashBoardService.findOrder(name);
 
-            ByteArrayInputStream in = excelExportService.exportToExcel(entities);
+            return ResponseEntity.ok(entities);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=data.xlsx");
-
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .body(new InputStreamResource(in));
+//            ByteArrayInputStream in = excelExportService.exportToExcel(entities);
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Content-Disposition", "attachment; filename=data.xlsx");
+//
+//            return ResponseEntity
+//                    .ok()
+//                    .headers(headers)
+//                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+//                    .body(new InputStreamResource(in));
         } catch (Exception e) {
             return new ResponseEntity<>("Error retrieving products: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);

@@ -13,7 +13,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
     List<Customer> findAllByUserId(Long id);
 
     @Query("SELECT new com.selling.dto.get.ExcelTypeDto(" +
-            "c.customerId, c.name, c.address, c.contact01, c.contact02, od.qty) " +
+            "c.customerId, c.name, c.address, c.contact01, c.contact02,null) " +
             "FROM Customer c " +
             "JOIN c.orders o " +
             "JOIN o.orderDetails od " +
@@ -25,10 +25,16 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
             "FROM Customer c " +
             "JOIN c.orders o " +
             "JOIN o.orderDetails od " +
-            "WHERE c.status = 'pending' " +
-            "AND od.product.id = :productId " +
+            "WHERE c.status = 'pending'" +
             "ORDER BY od.qty ASC")
     List<Order> findPendingOrdersWithQuantities(@Param("productId") Integer productId);
+
+//    @Query("SELECT DISTINCT od.order " +  // DISTINCT to avoid duplicates
+//            "FROM OrderDetail od " +
+//            "WHERE od.order.customer.status = 'pending' " +
+//            "AND od.product.productId = :productId " +
+//            "ORDER BY od.qty ASC")
+//    List<Order> findPendingOrdersWithQuantities(@Param("productId") Integer productId);
 
     int countByUserId(Long id);
 
