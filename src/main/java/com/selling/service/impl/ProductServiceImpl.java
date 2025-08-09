@@ -42,6 +42,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getAllProductsUserWise() {
         List<Product> products = productRepository.findAllByStatus("active");
         return products.stream()
                 .map(this::entityToDTO)
@@ -55,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
             Product product = productOptional.get();
             product.setName(productDTO.getName());
             product.setPrice(productDTO.getPrice());
-            // Status can be updated separately if needed
+            product.setStatus(productDTO.getStatus());
 
             Product updatedProduct = productRepository.save(product);
             return entityToDTO(updatedProduct);
@@ -68,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productOptional = productRepository.findById(Long.valueOf(id));
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-            product.setStatus("inactive");
+            product.setStatus("remove");
             productRepository.save(product);
             return true;
         }
@@ -104,6 +112,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(this::entityToDTO)
                 .collect(Collectors.toList());
     }
+
 
     private ProductDto entityToDTO(Product product) {
         return (product == null) ? null : modelMapperConfig.modelMapper().map(product, ProductDto.class);

@@ -1,6 +1,7 @@
 package com.selling.controller;
 
 import com.selling.dto.ProductDto;
+import com.selling.dto.UserDto;
 import com.selling.service.ProductService;
 import com.selling.util.JWTTokenGenerator;
 import com.selling.util.TokenStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/products")
@@ -59,9 +61,22 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllProducts() {
+    public ResponseEntity<Object> getAllProducts(@RequestHeader(name = "Authorization") String authorizationHeader) {
         try {
-            List<ProductDto> products = productService.getAllProducts();
+            List<ProductDto> products = null;
+            System.out.println("==============");
+            System.out.println(authorizationHeader);
+            if (authorizationHeader==null){
+                products = productService.getAllProducts();
+            }else {
+                UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
+                if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")) {
+                    products = productService.getAllProducts();
+                }else {
+                    products = productService.getAllProductsUserWise();
+                }
+            }
+
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error retrieving products: " + e.getMessage(),

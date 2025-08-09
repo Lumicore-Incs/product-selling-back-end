@@ -29,12 +29,6 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
             "ORDER BY od.qty ASC")
     List<Order> findPendingOrdersWithQuantities(@Param("productId") Integer productId);
 
-//    @Query("SELECT DISTINCT od.order " +  // DISTINCT to avoid duplicates
-//            "FROM OrderDetail od " +
-//            "WHERE od.order.customer.status = 'pending' " +
-//            "AND od.product.productId = :productId " +
-//            "ORDER BY od.qty ASC")
-//    List<Order> findPendingOrdersWithQuantities(@Param("productId") Integer productId);
 
     int countByUserId(Long id);
 

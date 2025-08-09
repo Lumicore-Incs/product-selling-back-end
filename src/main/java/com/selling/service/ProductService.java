@@ -12,4 +12,7 @@ public interface ProductService {
     ProductDto updateProduct(Integer id, ProductDto productDTO);
     boolean deleteProduct(Integer id);
     List<ProductDto> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice);
+
+    List<ProductDto> getAllProductsUserWise();
+
 }

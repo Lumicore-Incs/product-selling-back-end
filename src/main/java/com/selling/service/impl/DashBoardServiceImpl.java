@@ -67,34 +67,22 @@ public class DashBoardServiceImpl implements DashBoardService {
                 }
             }
         } else {
-            System.out.println("else");
             List<Order> pendingOrdersWithQuantities = customerRepo.findPendingOrdersWithQuantities(byName.getProductId());
-            System.out.println(pendingOrdersWithQuantities.size());
             for (Order order : pendingOrdersWithQuantities) {
                 int size = order.getOrderDetails().size();
-                System.out.println("sixe : "+size);
-                if (size == 1) {
-                    StringBuilder qtyDetails = null;
-                    for (OrderDetails od : order.getOrderDetails()) {
-                        if (od.getProduct().getProductId().equals(byName.getProductId())) {
-                            Product product = productRepo.findAllByProductId(od.getProduct().getProductId());
-                            if (qtyDetails == null) {
-                                qtyDetails = new StringBuilder();
-                            }
-                            System.out.println(size);
-                            System.out.println("-------------");
-                            System.out.println(od.getQty());
-                            System.out.println(qtyDetails);
-                            System.out.println("-------------");
-                            qtyDetails.append(" + ").append(product.getName()).append(" + ").append(od.getQty());
+                StringBuilder qtyDetails = null;
+                for (OrderDetails od : order.getOrderDetails()) {
+
+                    if (od.getProduct().getProductId().equals(byName.getProductId()) && size == 1) {
+                        Product product = productRepo.findAllByProductId(od.getProduct().getProductId());
+                        if (qtyDetails == null) {
+                            qtyDetails = new StringBuilder();
                         }
-                    }
+                        qtyDetails.append(" + ").append(product.getName()).append(" + ").append(od.getQty());
 
                         Customer customer = order.getCustomer();
-                        //customer.setStatus("print");
                         customerRepo.save(customer);
-                    System.out.println("============");
-                    System.out.println(customer.getName());
+                        System.out.println(customer.getName());
                         ExcelTypeDto excelTypeDto = new ExcelTypeDto();
                         excelTypeDto.setId(order.getOrderId());
                         excelTypeDto.setName(customer.getName());
@@ -103,6 +91,7 @@ public class DashBoardServiceImpl implements DashBoardService {
                         excelTypeDto.setContact02(customer.getContact02());
                         excelTypeDto.setQty(String.valueOf(qtyDetails));
                         excelTypeDtos.add(excelTypeDto);
+                    }
                 }
             }
         }
