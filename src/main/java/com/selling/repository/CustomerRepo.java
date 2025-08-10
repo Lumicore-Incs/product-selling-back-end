@@ -33,4 +33,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
     int countByUserId(Long id);
 
     List<Customer> findByUser_Id(Long id);
+
+
+    List<Customer> findByContact01(String contact01);
 }

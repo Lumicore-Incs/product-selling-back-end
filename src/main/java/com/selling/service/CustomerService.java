@@ -7,7 +7,7 @@ import com.selling.dto.get.CustomerDtoGet;
 import java.util.List;
 
 public interface CustomerService {
-    CustomerDtoGet saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto);
+    Object saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto);
 
     List<CustomerDtoGet> getAllCustomer();
 

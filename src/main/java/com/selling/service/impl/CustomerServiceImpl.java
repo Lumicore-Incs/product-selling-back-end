@@ -30,7 +30,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerDtoGet saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto) {
+    public Object saveCustomer(CustomerRequestDTO requestDTO, UserDto userDto) {
+
+        List<Customer> isCustomerCheck=customerRepository.findByContact01(requestDTO.getContact01());
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        for (Customer customer : isCustomerCheck) {
+            LocalDateTime date = customer.getDate();
+            if (date.isAfter(twoWeeksAgo)) {
+                // Customer date is within last 2 weeks
+                return ("true");
+            }
+        }
+
         // 1. Save Customer
         Customer customer = new Customer();
         customer.setName(requestDTO.getName());
