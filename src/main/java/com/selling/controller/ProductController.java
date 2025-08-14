@@ -61,21 +61,20 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllProducts(@RequestHeader(name = "Authorization") String authorizationHeader) {
+    public ResponseEntity<Object> getAllProducts() {
         try {
             List<ProductDto> products = null;
-            System.out.println("==============");
-            System.out.println(authorizationHeader);
-            if (authorizationHeader==null){
-                products = productService.getAllProducts();
-            }else {
-                UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
-                if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")) {
-                    products = productService.getAllProducts();
-                }else {
-                    products = productService.getAllProductsUserWise();
-                }
-            }
+//            if (authorizationHeader.equals(null)){
+//                products = productService.getAllProducts();
+//            }else {
+//                UserDto userDto = jwtTokenGenerator.getUserFromJwtToken(authorizationHeader);
+//                if (Objects.equals(userDto.getRole(), "admin") || Objects.equals(userDto.getRole(), "ADMIN") || Objects.equals(userDto.getRole(), "Admin")) {
+//                    products = productService.getAllProducts();
+//                }else {
+//                    products = productService.getAllProductsUserWise();
+//                }
+//            }
+                   products = productService.getAllProducts();
 
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (Exception e) {
