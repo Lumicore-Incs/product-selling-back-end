@@ -42,6 +42,7 @@ public class MailService {
                 String htmlContent = createOtpEmailContent(otp);
                 helper.setText(htmlContent, true);
 
+                System.out.println("ok");
                 mailSender.send(message);
                 return true;
             }else {
