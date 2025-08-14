@@ -114,19 +114,29 @@ public class UserServiceImpl implements UserService {
 
     // Send OTP to email
     public boolean sendOtpToEmail(String email) {
-        Optional<Otp> byEmail = otpRepo.findByEmail(email);
-        byEmail.ifPresent(otp -> otpRepo.deleteById(otp.getId()));
+       try {
+           Optional<User> user = userRepo.findByEmail(email);
+           if (user.isPresent()) {
+               Optional<Otp> byEmail = otpRepo.findByEmail(email);
+               byEmail.ifPresent(otp -> otpRepo.deleteById(otp.getId()));
 
-        // Generate new OTP
-        String otp = generateOtp();
-        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
+               // Generate new OTP
+               String otp = generateOtp();
+               LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
 
-        // Save OTP to database
-        Otp otpEntity = new Otp(email, otp, expiryTime);
-        otpRepo.save(otpEntity);
+               // Save OTP to database
+               Otp otpEntity = new Otp(email, otp, expiryTime);
+               otpRepo.save(otpEntity);
 
-        // Send OTP via email
-        return mailService.sendOtpEmail(email, otp);
+               // Send OTP via email
+               return mailService.sendOtpEmail(email, otp);
+           }
+           return false;
+       }catch (Exception e){
+           System.out.println("============");
+           System.out.println(e.getMessage());
+           return false;
+       }
     }
 
     // Validate OTP
